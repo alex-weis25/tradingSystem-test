@@ -22,16 +22,25 @@ const store = createStore(_browserHistory, client, window.__data);
 const history = syncHistoryWithStore(_browserHistory, store);
 
 function initSocket() {
-  let socket = io('', {path: '/ws'});
-  socket.on('snapshot', (data) => {
-    console.log(data);
+  const socket = io('', {
+    path: '/ws',
+    'reconnection': true,
+    'reconnectionDelay': 500,
+    'reconnectionAttempts': 50
+  });
+  socket.on('snapshot', data => {
+    console.log('snapshot data:', data);
     socket.emit('my other event', { my: 'data from client' });
   });
-  socket.on('update', (data) => {
+  socket.on('reconnect', attempts => {
+    console.log('reconnected', attempts);
+  });
+  socket.on('update', data => {
     console.log(data);
   });
-  socket.on('disconnect',() => {
-    socket = undefined;
+  socket.on('disconnect', () => {
+    console.log('socket disconnected');
+    // socket = undefined;
   });
   return socket;
 }
@@ -39,9 +48,15 @@ global.socket = initSocket();
 
 const component = (
   <Router
-    render={(props) =>
-        <ReduxAsyncConnect {...props} helpers={{client}} filter={item => !item.deferred} />
-      } history={history}>
+    render={props => (
+      <ReduxAsyncConnect
+        {...props}
+        helpers={{ client }}
+        filter={item => !item.deferred}
+      />
+    )}
+    history={history}
+  >
     {getRoutes(store)}
   </Router>
 );

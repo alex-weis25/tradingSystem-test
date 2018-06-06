@@ -502,4 +502,18 @@ body[dir="rtl"] .fixedDataTableColumnResizerLineLayout_main {
   background-color: #7d7d7d;
 }
 
+/* for fixed-data-table color formatting */
+
+.cell-uptick {
+  background-color: rgb(16, 136, 32);
+  transition: background-color 0.8s ease;
+  width: 100%;
+}
+
+.cell-downtick {
+  background-color: rgb(136, 16, 16);
+  transition: background-color 0.8s ease;
+  width: 100%;
+}
+
 /*# sourceMappingURL=main.css.map*/
